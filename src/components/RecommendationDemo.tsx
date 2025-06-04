@@ -2,23 +2,62 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Users, Briefcase } from 'lucide-react';
-import ImageGrid from './ImageGrid';
+import CandidateCard from './CandidateCard';
+import JobOfferCard from './JobOfferCard';
 import RecommendationCard from './RecommendationCard';
 
 const RecommendationDemo = () => {
+  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const candidateImages = [
-    'photo-1649972904349-6e44c42644a7',
-    'photo-1581091226825-a6a2a5aee158',
-    'photo-1519389950473-47ba0277781c'
+  const candidates = [
+    {
+      id: '1',
+      name: 'Ana García',
+      age: 28,
+      skills: 'React, TypeScript, CSS',
+      experience: '3 años en desarrollo frontend'
+    },
+    {
+      id: '2',
+      name: 'Carlos López',
+      age: 32,
+      skills: 'Node.js, MongoDB, AWS',
+      experience: '5 años en desarrollo backend'
+    },
+    {
+      id: '3',
+      name: 'María Rodríguez',
+      age: 26,
+      skills: 'UI/UX, Figma, Photoshop',
+      experience: '2 años en diseño digital'
+    }
   ];
 
-  const offerImages = [
-    'photo-1488590528505-98d2b5aba04b',
-    'photo-1461749280684-dccba630e2f6',
-    'photo-1486312338219-ce68d2c6f44d'
+  const jobOffers = [
+    {
+      id: '1',
+      title: 'Senior React Developer',
+      company: 'TechCorp',
+      location: 'Madrid, España',
+      type: 'Tiempo completo, Remoto'
+    },
+    {
+      id: '2',
+      title: 'Frontend Lead',
+      company: 'StartupXYZ',
+      location: 'Barcelona, España',
+      type: 'Tiempo completo, Híbrido'
+    },
+    {
+      id: '3',
+      title: 'Full Stack Developer',
+      company: 'InnovaTech',
+      location: 'Valencia, España',
+      type: 'Tiempo completo, Presencial'
+    }
   ];
 
   const mockRecommendations = [
@@ -29,32 +68,25 @@ const RecommendationDemo = () => {
       type: "candidate" as const
     },
     {
-      title: "Carlos López - Full Stack Developer", 
-      description: "Experto en Node.js y bases de datos. Experiencia en arquitectura de software.",
-      match: "88% match",
-      type: "candidate" as const
-    },
-    {
-      title: "María Rodríguez - UI/UX Designer",
-      description: "Diseñadora con enfoque en experiencia de usuario y interfaces modernas.",
-      match: "92% match", 
-      type: "candidate" as const
-    },
-    {
       title: "Senior React Developer - TechCorp",
       description: "Posición remota para desarrollar aplicaciones web con React y TypeScript.",
       match: "90% match",
       type: "offer" as const
     },
     {
-      title: "Frontend Lead - StartupXYZ",
-      description: "Liderar equipo de frontend en startup de tecnología financiera.",
-      match: "85% match",
-      type: "offer" as const
+      title: "María Rodríguez - UI/UX Designer",
+      description: "Diseñadora con enfoque en experiencia de usuario y interfaces modernas.",
+      match: "88% match", 
+      type: "candidate" as const
     }
   ];
 
   const handleTryIt = () => {
+    if (!selectedCandidate && !selectedOffer) {
+      alert('Por favor, selecciona al menos un candidato o una oferta');
+      return;
+    }
+    
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -78,18 +110,46 @@ const RecommendationDemo = () => {
           </p>
         </div>
 
-        {/* Image Grids */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <ImageGrid 
-            title="Candidatos Disponibles"
-            images={candidateImages}
-            type="candidates"
-          />
-          <ImageGrid 
-            title="Ofertas de Trabajo"
-            images={offerImages}
-            type="offers"
-          />
+        {/* Candidates Section */}
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <Users className="w-6 h-6 text-blue-600 mr-2" />
+            <h2 className="text-2xl font-bold text-gray-800">Candidatos Disponibles</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {candidates.map((candidate) => (
+              <div 
+                key={candidate.id}
+                className={`${selectedCandidate === candidate.id ? 'ring-2 ring-blue-500' : ''}`}
+              >
+                <CandidateCard
+                  {...candidate}
+                  onSelect={() => setSelectedCandidate(candidate.id)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Job Offers Section */}
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <Briefcase className="w-6 h-6 text-green-600 mr-2" />
+            <h2 className="text-2xl font-bold text-gray-800">Ofertas de Trabajo</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {jobOffers.map((offer) => (
+              <div 
+                key={offer.id}
+                className={`${selectedOffer === offer.id ? 'ring-2 ring-green-500' : ''}`}
+              >
+                <JobOfferCard
+                  {...offer}
+                  onSelect={() => setSelectedOffer(offer.id)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Try It Button */}
@@ -119,7 +179,7 @@ const RecommendationDemo = () => {
           <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
             <div className="flex items-center mb-6">
               <div className="flex items-center">
-                <Users className="w-6 h-6 text-indigo-600 mr-2" />
+                <Sparkles className="w-6 h-6 text-indigo-600 mr-2" />
                 <h2 className="text-2xl font-bold text-gray-800">Recomendaciones Generadas</h2>
               </div>
               <div className="ml-auto bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
